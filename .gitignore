@@ -1,0 +1,29 @@
+# Node / build artifacts
+node_modules/
+dist/
+build/
+.next/
+.cache/
+*.log
+
+# Environment & secrets
+.env
+.env.local
+.env.*.local
+.env.production
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/*.local
+.idea/
+*.swp
+*.swo
+
+# Misc
+*.bak
+*.tmp
+*.orig
+*~
