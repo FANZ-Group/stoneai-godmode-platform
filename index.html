@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>StoneAI GOD MODE — Infrastructure Map</title>
+<style>
+  :root {
+    --bg: #05080f;
+    --panel: rgba(8, 14, 28, 0.85);
+    --border: rgba(0, 200, 255, 0.25);
+    --text: #c8d8e8;
+    --dim: #5a6a7a;
+    --cyan: #00c8ff;
+    --green: #00ff88;
+    --red: #ff4466;
+    --amber: #ffaa00;
+    --font: "SF Mono", "Menlo", "Consolas", monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; background: var(--bg); color: var(--text); font-family: var(--font); }
+  #canvas { position: fixed; inset: 0; z-index: 0; }
+  #hud { position: fixed; top: 0; left: 0; right: 0; z-index: 10; display: flex; justify-content: space-between; align-items: flex-start; padding: 16px 24px; pointer-events: none; }
+  #hud > * { pointer-events: auto; }
+  .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 6px; padding: 12px 16px; backdrop-filter: blur(8px); }
+  .title { font-size: 11px; letter-spacing: 3px; color: var(--cyan); text-transform: uppercase; margin-bottom: 8px; }
+  .big { font-size: 20px; font-weight: 700; color: var(--cyan); }
+  .stat { font-size: 11px; color: var(--dim); margin-top: 2px; }
+  .stat b { color: var(--text); }
+  #detail { position: fixed; bottom: 24px; right: 24px; z-index: 10; width: 360px; max-height: 60vh; overflow-y: auto; }
+  #detail .row { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 12px; }
+  #detail .row .k { color: var(--dim); }
+  #detail .row .v { color: var(--text); font-weight: 600; }
+  #detail .actions { display: flex; gap: 8px; margin-top: 12px; }
+  button { background: rgba(0,200,255,0.1); border: 1px solid var(--cyan); color: var(--cyan); padding: 6px 14px; border-radius: 4px; cursor: pointer; font-family: var(--font); font-size: 11px; letter-spacing: 1px; text-transform: uppercase; transition: all 0.15s; }
+  button:hover { background: rgba(0,200,255,0.25); }
+  button.danger { border-color: var(--red); color: var(--red); background: rgba(255,68,102,0.1); }
+  button.danger:hover { background: rgba(255,68,102,0.25); }
+  button:disabled { opacity: 0.3; cursor: not-allowed; }
+  #legend { position: fixed; bottom: 24px; left: 24px; z-index: 10; font-size: 11px; }
+  #legend .item { display: flex; align-items: center; gap: 8px; margin: 4px 0; }
+  #legend .dot { width: 10px; height: 10px; border-radius: 50%; }
+  #status-bar { position: fixed; bottom: 0; left: 0; right: 0; z-index: 10; padding: 6px 24px; background: rgba(0,0,0,0.6); border-top: 1px solid var(--border); font-size: 10px; color: var(--dim); display: flex; justify-content: space-between; }
+  #toast { position: fixed; top: 80px; left: 50%; transform: translateX(-50%); z-index: 20; background: var(--panel); border: 1px solid var(--cyan); padding: 10px 20px; border-radius: 6px; font-size: 12px; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+  #toast.show { opacity: 1; }
+  .empty { color: var(--dim); font-style: italic; font-size: 12px; }
+</style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+
+<div id="hud">
+  <div class="panel">
+    <div class="title">StoneAI GOD MODE</div>
+    <div class="big" id="asset-count">0</div>
+    <div class="stat">enrolled assets</div>
+  </div>
+  <div class="panel" style="text-align:right">
+    <div class="title">Infrastructure Status</div>
+    <div class="stat">online: <b id="online-count">0</b></div>
+    <div class="stat">offline: <b id="offline-count">0</b></div>
+    <div class="stat">isolated: <b id="isolated-count">0</b></div>
+  </div>
+</div>
+
+<div id="detail" class="panel" style="display:none">
+  <div class="title" id="detail-title">Asset Details</div>
+  <div id="detail-rows"></div>
+  <div class="actions">
+    <button id="btn-isolate">Isolate</button>
+    <button id="btn-stop" class="danger">Stop</button>
+    <button id="btn-restart">Restart</button>
+  </div>
+</div>
+
+<div id="legend" class="panel">
+  <div class="title">Legend</div>
+  <div class="item"><div class="dot" style="background:#00c8ff"></div> Server</div>
+  <div class="item"><div class="dot" style="background:#00ff88"></div> Service</div>
+  <div class="item"><div class="dot" style="background:#ffaa00"></div> Container</div>
+  <div class="item"><div class="dot" style="background:#ff4466"></div> Network</div>
+  <div class="item"><div class="dot" style="background:#aa66ff"></div> Storage</div>
+  <div class="item"><div class="dot" style="background:#666"></div> Offline</div>
+</div>
+
+<div id="status-bar">
+  <span id="status-left">CONNECTING...</span>
+  <span id="status-right">GOD MODE v1.0 · STONEAI</span>
+</div>
+
+<div id="toast"></div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+<script type="module" src="map.js"></script>
+</body>
+</html>
+EOF
+echo "written"

@@ -1,0 +1,18 @@
+{
+  "name": "stoneai-godmode-platform",
+  "version": "1.0.0",
+  "description": "StoneAI GOD MODE — the owner's root-authority control plane as a standalone 3D infrastructure platform. Halo-style tactical map of your entire estate. Shut off any section, provider, or asset and watch it happen on the map.",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  }
+}
+EOF
+echo "written"
